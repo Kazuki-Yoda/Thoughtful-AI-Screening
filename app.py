@@ -1,7 +1,11 @@
 import gradio as gr
 from huggingface_hub import InferenceClient
 
+from predefined import get_predefined_answer_for_closest_predefined_question
+
 """
+Copied and modified from HuggingFace Gradio default ChatInterface space
+
 For more information on `huggingface_hub` Inference API support, please check the docs: https://huggingface.co/docs/huggingface_hub/v0.22.2/en/guides/inference
 """
 client = InferenceClient("HuggingFaceH4/zephyr-7b-beta")
@@ -15,6 +19,14 @@ def respond(
     temperature,
     top_p,
 ):
+    ### Modified from here ###
+    predefined_answer = get_predefined_answer_for_closest_predefined_question(message)
+    
+    if predefined_answer:
+        yield predefined_answer
+        return
+    ### Modified until here ###
+    
     messages = [{"role": "system", "content": system_message}]
 
     for val in history:
